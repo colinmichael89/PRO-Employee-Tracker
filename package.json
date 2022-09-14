@@ -1,0 +1,24 @@
+{
+  "name": "pro-employee-tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/colinmichael89/PRO-Employee-Tracker.git"
+  },
+  "author": "Colin McNatt",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/colinmichael89/PRO-Employee-Tracker/issues"
+  },
+  "homepage": "https://github.com/colinmichael89/PRO-Employee-Tracker#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^8.0.0",
+    "mysql2": "^2.3.3"
+  }
+}
