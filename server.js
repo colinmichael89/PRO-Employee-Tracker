@@ -17,6 +17,76 @@ app.use((req, res) => {
   res.status(404).end();
 });
 
-sequelize.sync({ force: false }).then(() => {
-  app.listen(PORT, () => console.log("Now listening"));
-});
+const db = mysql.createConnection(
+  sequelize.sync({ force: false }).then(() => {
+    app.listen(PORT, () => console.log("Now listening"));
+    afterConnection();
+  })
+);
+
+// Function to start the Inquirer prompts
+afterConnection = () => {
+  console.log("***********************************");
+  console.log("*                                 *");
+  console.log("*      PRO EMPLOYEE TRACKER       *");
+  console.log("*                                 *");
+  console.log("***********************************");
+  promptUser();
+};
+
+// inquirer prompt for first action
+const promptUser = () => {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "action",
+        message: "What would you like to do?",
+        choices: [
+          "View all employees",
+          "View all departments",
+          "View all roles",
+          "Add an employee",
+          "Add a department",
+          "Add a role",
+          "Update an employee role",
+          "Exit",
+        ],
+      },
+    ])
+    .then((answer) => {
+      switch (answer.action) {
+        case "View all employees":
+          viewAllEmployees();
+          break;
+
+        case "View all departments":
+          viewAllDepartments();
+          break;
+
+        case "View all roles":
+          viewAllRoles();
+          break;
+
+        case "Add an employee":
+          addEmployee();
+          break;
+
+        case "Add a department":
+          addDepartment();
+          break;
+
+        case "Add a role":
+          addRole();
+          break;
+
+        case "Update an employee role":
+          updateEmployeeRole();
+          break;
+
+        case "Exit":
+          exit();
+          break;
+      }
+    });
+};
