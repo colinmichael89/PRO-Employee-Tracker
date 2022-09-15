@@ -99,16 +99,18 @@ const promptUser = () => {
 // Function to show all employees
 viewEmployees = () => {
   console.log(`Showing all employees...\n`);
-  //
-  //
-  //
-  // How does my query.sql page come into play here??
-  const sql = ``;
-  //
-  ///
-  //
-  //
-  ///
+  const sql = `SELECT employee.id, 
+  employee.first_name, 
+  employee.last_name, 
+  role.title, 
+  department.name AS department,
+  role.salary, 
+  CONCAT (manager.first_name, " ", manager.last_name) AS manager
+FROM employee
+  LEFT JOIN role ON employee.role_id = role.id
+  LEFT JOIN department ON role.department_id = department.id
+  LEFT JOIN employee manager ON employee.manager_id = manager.id`;
+
   db.promise().query(sql, (err, res) => {
     if (err) throw err;
     console.table(res);
@@ -119,14 +121,8 @@ viewEmployees = () => {
 // Function to show all departments
 viewDepartments = () => {
   console.log(`Showing all departments...\n`);
-  //
-  //
-  //
-  // How does my query.sql page come into play here??
+
   const sql = `SELECT department.id, department.name AS department FROM department`;
-  ///
-  //
-  ///
 
   db.promise().query(sql, (err, res) => {
     if (err) throw err;
@@ -178,15 +174,8 @@ addEmployee = () => {
     ])
     .then((answer) => {
       const params = [answer.firstName, answer.lastName];
-      //
-      //
-      //
-      // How does my query.sql page come into play here??
       // Get role id and title from roles table
       const sql = `SELECT role.id, role.title FROM role`;
-      //
-      //
-      //
 
       db.promise().query(sql, (err, data) => {
         if (err) throw err;
@@ -232,11 +221,10 @@ addEmployee = () => {
                   const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
                     VALUES (?, ?, ?, ?)`;
 
-                  db.promise().query(sql, params, (err, result) => {
+                  db.promise().query(sql, params, (err, res) => {
                     if (err) throw err;
                     console.log(`Employee has been added!`);
-
-                    viewEmployees();
+                    res(viewEmployees());
                   });
                 });
             });
@@ -343,9 +331,9 @@ addRole = () => {
 };
 
 // Function to update an employee role
-// updateRole = () => {
-//   inquirer.prompt([
+updateRole = () => {
+  inquirer.prompt([
 
 // Function to update an employee manager
-// updateManager = () => {
-//   inquirer.prompt([
+updateManager = () => {
+  inquirer.prompt([
