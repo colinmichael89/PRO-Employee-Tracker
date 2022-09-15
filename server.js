@@ -90,3 +90,20 @@ const promptUser = () => {
       }
     });
 };
+
+// Function to show all employees
+showEmployees = () => {
+  console.log("Showing all employees...\n");
+  const sql = 
+
+// Function to show all departments 
+showDepartments = () => {
+  console.log("Showing all departments...\n");
+  const sql = `SELECT department.id, department.name AS department FROM department`;
+
+  db.promise().query(sql, (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    promptUser();
+  });
+};
