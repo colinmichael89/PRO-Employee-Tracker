@@ -464,3 +464,9 @@ updateManager = () => {
       });
   });
 };
+
+// Exit application
+exit = () => {
+  console.log(`Goodbye!`);
+  process.exit();
+};
