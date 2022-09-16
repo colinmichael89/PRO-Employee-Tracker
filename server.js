@@ -18,9 +18,9 @@ app.use((req, res) => {
 // connection to database
 const db = mysql.createConnection({
   host: `localhost`,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  user: `root`,
+  password: `Doobie#1!`,
+  database: `employee_db`,
 });
 
 app.listen(PORT, () => {
@@ -122,7 +122,7 @@ viewDepartments = () => {
 
   const sql = `SELECT department.id, department.name AS department FROM department`;
 
-  db.promise().query(sql, (err, res) => {
+  db.query(sql, (err, res) => {
     if (err) throw err;
     console.table(res);
     promptUser();
@@ -131,9 +131,9 @@ viewDepartments = () => {
 // Function to show all employee roles
 viewRoles = () => {
   console.log(`Showing all employee roles...\n`);
-  const sql = ``;
+  const sql = `SELECT role.id, role.title, role.salary, role.department_id AS department FROM role`;
 
-  db.promise().query(sql, (err, res) => {
+  db.query(sql, (err, res) => {
     if (err) throw err;
     console.table(res);
     promptUser();
@@ -175,7 +175,7 @@ addEmployee = () => {
       // Get role id and title from roles table
       const sql = `SELECT role.id, role.title FROM role`;
 
-      db.promise().query(sql, (err, data) => {
+      db.query(sql, (err, data) => {
         if (err) throw err;
 
         const roles = data.map(({ id, title }) => ({ name: title, value: id }));
@@ -195,7 +195,7 @@ addEmployee = () => {
 
             const sql = `SELECT * FROM employee`;
 
-            db.promise().query(sql, (err, data) => {
+            db.query(sql, (err, data) => {
               if (err) throw err;
 
               const managers = data.map(({ id, first_name, last_name }) => ({
@@ -219,10 +219,10 @@ addEmployee = () => {
                   const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
                     VALUES (?, ?, ?, ?)`;
 
-                  db.promise().query(sql, params, (err, res) => {
+                  db.query(sql, params, (err, res) => {
                     if (err) throw err;
                     console.log(`Employee has been added!`);
-                    res(viewEmployees());
+                    viewEmployees();
                   });
                 });
             });
@@ -283,7 +283,7 @@ addRole = () => {
         name: `salary`,
         message: `What is the salary of this role?`,
         validate: (addSalary) => {
-          if (isNAN(addSalary)) {
+          if (addSalary !== NaN) {
             return true;
           } else {
             console.log(`Please enter a salary`);
@@ -297,7 +297,7 @@ addRole = () => {
       // Get department ID
       const sql = `SELECT name, id FROM department`;
 
-      db.promise().query(sql, (err, data) => {
+      db.query(sql, (err, data) => {
         if (err) throw err;
 
         const dept = data.map(({ name, id }) => ({ name: name, value: id }));
@@ -318,7 +318,7 @@ addRole = () => {
             const sql = `INSERT INTO role (title, salary, department_id)
                         VALUES (?, ?, ?)`;
 
-            db.promise().query(sql, params, (err, result) => {
+            db.query(sql, params, (err, result) => {
               if (err) throw err;
               console.log(`Added ${answer.role} to roles!`);
 
@@ -330,11 +330,11 @@ addRole = () => {
 };
 
 // Function to update an employee role
-updateEmployee = () => {
+updateRole = () => {
   // get employees from employee table
   const sql = `SELECT * FROM employee`;
 
-  db.promise().query(sql, (err, data) => {
+  db.query(sql, (err, data) => {
     if (err) throw err;
 
     const employees = data.map(({ id, first_name, last_name }) => ({
@@ -345,9 +345,9 @@ updateEmployee = () => {
     inquirer
       .prompt([
         {
-          type: "list",
-          name: "name",
-          message: "Which employee would you like to update?",
+          type: `list`,
+          name: `name`,
+          message: `Which employee would you like to update?`,
           choices: employees,
         },
       ])
@@ -358,7 +358,7 @@ updateEmployee = () => {
 
         const sql = `SELECT * FROM role`;
 
-        db.promise().query(sql, (err, data) => {
+        db.query(sql, (err, data) => {
           if (err) throw err;
 
           const roles = data.map(({ id, title }) => ({
@@ -369,9 +369,9 @@ updateEmployee = () => {
           inquirer
             .prompt([
               {
-                type: "list",
-                name: "role",
-                message: "What is the employee's new role?",
+                type: `list`,
+                name: `role`,
+                message: `What is the employee's new role?`,
                 choices: roles,
               },
             ])
@@ -383,15 +383,13 @@ updateEmployee = () => {
               params[0] = role;
               params[1] = employee;
 
-              // console.log(params)
-
               const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
 
-              db.promise().query(sql, params, (err, res) => {
+              db.query(sql, params, (err, res) => {
                 if (err) throw err;
-                console.log(`Employee has been updated!`);
+                console.log(`Employee role has been updated!`);
 
-                showEmployees();
+                viewEmployees();
               });
             });
         });
@@ -399,12 +397,12 @@ updateEmployee = () => {
   });
 };
 
-// function to update an employee
+// function to update employee manager
 updateManager = () => {
   // get employees from employee table
   const sql = `SELECT * FROM employee`;
 
-  db.promise().query(sql, (err, data) => {
+  db.query(sql, (err, data) => {
     if (err) throw err;
 
     const employees = data.map(({ id, first_name, last_name }) => ({
@@ -428,11 +426,11 @@ updateManager = () => {
 
         const sql = `SELECT * FROM employee`;
 
-        db.promise().query(sql, (err, data) => {
+        db.query(sql, (err, data) => {
           if (err) throw err;
 
           const managers = data.map(({ id, first_name, last_name }) => ({
-            name: first_name + " " + last_name,
+            name: first_name + ` ` + last_name,
             value: id,
           }));
 
@@ -459,7 +457,7 @@ updateManager = () => {
                 if (err) throw err;
                 console.log("Employee has been updated!");
 
-                showEmployees();
+                viewEmployees();
               });
             });
         });
